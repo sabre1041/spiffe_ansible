@@ -1,0 +1,9 @@
+---
+
+- name: Install Spire Agent
+  hosts: spire_agent
+  tasks:
+    - name: Run apire_agent role
+      ansible.builtin.include_role:
+        name: spire_agent
+...

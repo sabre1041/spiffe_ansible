@@ -1,0 +1,38 @@
+---
+# defaults file for spire_agent
+
+spire_version: 1.10.0
+spire_agent_download_url: "https://github.com/spiffe/spire/releases/download/v{{ spire_version }}/spire-{{ spire_version }}-linux-amd64-musl.tar.gz"
+spire_agent_conf_base: /etc
+spire_agent_conf_relative: spire/agent
+spire_agent_conf_dir: "{{ spire_agent_conf_base }}/{{ spire_agent_conf_relative }}"
+spire_agent_conf_path: "{{ spire_agent_conf_dir }}/agent.conf"
+spire_agent_data_base: /var/lib
+spire_agent_data_relative: spire/agent
+spire_agent_data_dir: "{{ spire_agent_data_base }}/{{ spire_agent_data_relative }}"
+spire_agent_runtime_base: /run
+spire_agent_runtime_relative: spire/agent
+spire_agent_runtime_dir: "{{ spire_agent_runtime_base }}/{{ spire_agent_runtime_relative }}"
+spire_agent_socket_dir: "{{ spire_agent_runtime_dir }}/sockets/public"
+spire_agent_socket_path: "{{ spire_agent_socket_dir }}/api.sock"
+spire_install_dir: /opt/spire
+
+spire_trust_domain: ""
+spire_server_address: ""
+spire_server_port: 443
+
+spire_agent_insecure_bootstrap: true
+spire_agent_join_token: ""
+spire_agent_log_level: INFO
+
+spire_agent_systemd_config_file_location: /etc/systemd/system
+spire_agent_systemd_name: spire-agent
+spire_agent_systemd_service_file_name: "{{ spire_agent_systemd_config_file_location }}/{{ spire_agent_systemd_name }}"
+spire_agent_systemd_service_file_suffix: ".service"
+spire_agent_systemd_conf_file_suffix: ".conf"
+spire_agent_systemd_service_file: "{{ spire_agent_systemd_service_file_name }}{{ spire_agent_systemd_service_file_suffix }}"
+spire_agent_systemd_conf_file: "{{ spire_agent_systemd_service_file_name }}{{ spire_agent_systemd_conf_file_suffix }}"
+spire_agent_systemd_enabled: true
+
+system_bin_dir: /usr/local/bin
+...

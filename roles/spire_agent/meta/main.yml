@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Andrew Block <ablock@redhat.com>
+  description: Install and configure SPIRE Agent
+  company: Red Hat
+
+  license: Apache-2.0
+
+  min_ansible_version: 2.15.0
+
+  galaxy_tags: []
+
+dependencies: []

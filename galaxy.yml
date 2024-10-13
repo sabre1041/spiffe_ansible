@@ -1,0 +1,25 @@
+---
+# This collection is initialized by https://github.com/ansible/ansible-creator 24.9.0
+
+# See https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html
+
+namespace: "spiffe"
+name: "spiffe"
+version: 1.0.0
+readme: README.md
+authors:
+  - Andrew Block <ablock@redhat.com>
+
+description: your collection description
+license_file: LICENSE
+tags: ["linux", "tools", "security"]
+dependencies: {}
+
+repository: https://github.com/sabre1041/spiffe_ansible
+documentation: https://github.com/sabre1041/spiffe_ansible
+homepage: https://github.com/sabre1041/spiffe_ansible
+issues: https://github.com/sabre1041/spiffe_ansible/issues
+
+build_ignore:
+  - .gitignore
+  - changelogs/.plugin-cache.yaml

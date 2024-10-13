@@ -1,0 +1,14 @@
+---
+- name: service | Check arguments
+  ansible.builtin.assert:
+    that:
+      - instance_state is defined
+    quiet: true
+
+- name: "service | Set {{ spire_agent_systemd_name }} service state to {{ instance_state }}"
+  throttle: 1
+  ansible.builtin.systemd:
+    name: "{{ spire_agent_systemd_name }}"
+    state: "{{ instance_state }}"
+    enabled: "{{ spire_agent_systemd_enabled | default(omit) }}"
+    daemon_reload: true

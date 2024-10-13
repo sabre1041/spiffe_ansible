@@ -1,0 +1,24 @@
+agent {
+  log_level = "{{ spire_agent_log_level }}"
+  trust_domain = "${SPIRE_AGENT_TRUST_DOMAIN}"
+  server_address = "${SPIRE_AGENT_SERVER_ADDRESS}"
+  server_port = ${SPIRE_AGENT_SERVER_PORT}
+  insecure_bootstrap = {{ spire_agent_insecure_bootstrap | string | lower }}
+  join_token = "${SPIRE_AGENT_JOIN_TOKEN}"
+}
+
+plugins {
+  KeyManager "disk" {
+    plugin_data {
+      directory = "./"
+    }
+  }
+
+  NodeAttestor "join_token" {
+    plugin_data {}
+  }
+    
+  WorkloadAttestor "unix" {
+    plugin_data {}
+  }
+}

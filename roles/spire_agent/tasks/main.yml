@@ -1,0 +1,89 @@
+---
+# tasks file for spire_agent
+
+- name: Verify Required Parameters Provided
+  ansible.builtin.assert:
+    that:
+      - spire_trust_domain | default('', True) | trim | length > 0
+      - spire_server_address | default('', True) | trim | length > 0
+      - spire_agent_join_token | default('', True) | trim | length > 0
+    fail_msg: "'spire_trust_domain', 'spire_server_address' and 'spire_agent_join_token' must be provided"
+    quiet: true
+
+- name: Create Spire Install Directory
+  ansible.builtin.file:
+    path: "{{ spire_install_dir }}"
+    state: directory
+    mode: 0750
+
+- name: Download Spire Agent Package
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: "{{ spire_agent_download_url }}"
+    dest: "{{ spire_install_dir }}"
+    extra_opts: [--strip-components=1]
+    creates: "{{ spire_install_dir }}/bin/spire-agent"
+
+- name: Create spire-agent Symbolic Link
+  ansible.builtin.file:
+    src: "{{ spire_install_dir }}/bin/spire-agent"
+    dest: "{{ system_bin_dir }}/spire-agent"
+    state: link
+
+- name: Create Spire Agent Data Directory
+  ansible.builtin.file:
+    path: "{{ spire_agent_data_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Create Spire Agent Runtime Directory
+  ansible.builtin.file:
+    path: "{{ spire_agent_runtime_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Create Spire Agent Conf Directory
+  ansible.builtin.file:
+    path: "{{ spire_agent_conf_dir }}"
+    state: directory
+    mode: 0755
+
+- name: Trigger restart if changes occur
+  notify: restart_spire_agent
+  block:
+    - name: Create Spire Agent Configuration
+      ansible.builtin.template:
+        src: agent.conf.j2
+        dest: "{{ spire_agent_conf_path }}"
+        mode: 0644
+
+    - name: "Deploy Systemd configuration for service: {{ spire_agent_systemd_name }}"
+      ansible.builtin.template:
+        src: "spire-agent.conf.j2"
+        dest: "{{ spire_agent_systemd_conf_file }}"
+        group: root
+        owner: root
+        mode: '0644'
+      register: daemon_reload_env
+
+    - name: "Deploy Systemd unit for service: {{ spire_agent_systemd_name }}"
+      ansible.builtin.template:
+        src: "spire-agent.service.j2"
+        dest: "{{ spire_agent_systemd_service_file }}"
+        group: root
+        owner: root
+        mode: '0644'
+      register: daemon_reload
+
+    - name: "Perform daemon-reload to ensure the changes are picked up"
+      ansible.builtin.systemd:
+        daemon_reload: true
+      when:
+        - daemon_reload is defined or daemon_reload_env is defined
+        - daemon_reload.changed or daemon_reload_env.changed
+
+    - name: "Ensure service is started"
+      ansible.builtin.include_tasks: service.yml
+      vars:
+        instance_state: "started"
+...

@@ -1,0 +1,42 @@
+[Unit]
+Description=SPIRE Agent Daemon
+After=network-online.target local-fs.target time-sync.target
+Before=remote-fs-pre.target
+Wants=network-online.target local-fs.target time-sync.target remote-fs-pre.target
+
+[Service]
+EnvironmentFile=-{{ spire_agent_systemd_conf_file }}
+WorkingDirectory={{ spire_agent_data_dir }}
+StateDirectory={{ spire_agent_data_relative }}
+RuntimeDirectory={{ spire_agent_runtime_relative }}
+RuntimeDirectoryPreserve=true
+ConfigurationDirectory={{ spire_agent_conf_relative }}
+ExecStart={{ system_bin_dir }}/spire-agent run -config {{ spire_agent_conf_path }} -dataDir {{ spire_agent_data_dir }} -socketPath {{ spire_agent_socket_path }} -expandEnv
+ExecStartPre=mkdir -p {{ spire_agent_data_dir }} {{ spire_agent_runtime_dir }}
+LockPersonality=true
+MemoryDenyWriteExecute=true
+NoNewPrivileges=true
+PrivateDevices=false
+# Needed by plugins
+PrivateTmp=false
+ProtectControlGroups=true
+ProtectHome=true
+ProtectHostname=true
+ProtectKernelLogs=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectSystem=strict
+ReadOnlyPaths=/
+ReadWritePaths={{ spire_agent_data_dir }} {{ spire_agent_runtime_dir }}
+Restart=on-failure
+RestartSec=15
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+RestrictNamespaces=true
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+StartLimitBurst=3
+StartLimitInterval=30min
+TasksMax=infinity
+
+[Install]
+WantedBy=multi-user.target
